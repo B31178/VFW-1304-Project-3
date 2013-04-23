@@ -1,6 +1,6 @@
 // Travis Pochintesta
 // VFW 1304
-// Project 2
+// Week 3
 // main.js
 
 /* Wait for DOM */
