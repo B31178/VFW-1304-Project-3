@@ -22,6 +22,8 @@ window.addEventListener("DOMContentLoaded", function() {
 	var storeContact = $("submit");
 	var displayContact = $("displayContact");
 	var clearContacts = $("clearContacts");
+	
+	var errorMsg =$("errors");
 
 /* Declare Functions */
 
@@ -118,7 +120,7 @@ window.addEventListener("DOMContentLoaded", function() {
 	
 	makeTitles();
 	
-/* Collect Form Values */
+/* Collect Values */
 
 	function saveData(){
 		var key				= Math.floor(Math.random()*10000001); /* What if the same # is randomly generated twice?  Should I buy a lotto ticket? */
@@ -150,7 +152,7 @@ window.addEventListener("DOMContentLoaded", function() {
 	}
 	
 /* Display Contact */
-	
+
 	function getContact(){
 		toggleDisplay("on");
 		if(localStorage.length === 0){
@@ -164,6 +166,7 @@ window.addEventListener("DOMContentLoaded", function() {
 		$("items").style.display = "block";
 		for(var i=0, len=localStorage.length; i<len; i++){
 			var addContact = document.createElement("li");
+			var addLinks = document.createElement("li");
 			makeContact.appendChild(addContact);
 			var key = localStorage.key(i);
 			var props = localStorage.getItem(key);
@@ -175,7 +178,114 @@ window.addEventListener("DOMContentLoaded", function() {
 				addProperties.appendChild(addSubProp);
 				var optSubText = contact[a][0]+" "+contact[a][1]; // ?
 				addSubProp.innerHTML = optSubText;
+				addProperties.appendChild(addLinks);
 			}
+			makeLinks(localStorage.key(i),addLinks);
+		}
+	}
+	
+	function makeLinks(key, addLinks){
+		var editLink = document.createElement("a");
+		editLink.href = "#";
+		editLink.key = key;
+		var editLinkText = "Edit Contact";
+		//editLink.addEventListener("click", editItem);
+		editLink.innerHTML = editLinkText;
+		makeLinks.appendChild(editLink);
+		
+		var deleteLink = document.createElement("a");
+		deleteLink.href = "#";
+		deleteLink.key = key;
+		var deleteLinkText = "Delete Contact";
+		//deleteLink.addEventListener("click", deleteItem);
+		deleteLink.innerHTML = deleteLinkText;
+		makeLinks.appendChild(deleteLink);
+	}
+	
+	function editItem(){
+		var value = localStorage.getItem(this.key);
+		var item = JSON.parse(value);
+		toggleControls("off");
+		$("fname").value = contact.fname;
+		$("lname").value = contact.lname;
+		$("phone").value = contact.phone;
+		$("address").value = contact.address;
+		$("email").value] = contact.email;
+		var radios = document.forms[0].gender;
+		for(var i=0; i<radios.length; i++){
+			if(radios[i].value == "Male" && contact.gender[1] == "Male"){
+				radios[i].setAttribute("checked", "checked");
+		}else if(radios[i].value == "Female" && contact.gender[1] == "Female"){
+			radios[i]setAttribute("checked", "checked");
+		}
+		$("titles").value = contact.title;
+		if(contact.friend[1] == "Friend"){
+			$(friendCheck).setAttribute("checked", "checked");
+		}
+		if(contact.family[1] == "Family"){
+			$(familyCheck).setAttribute("checked", "checked");
+		}
+		if(contact.school[1] == "School"){
+			$(schoolCheck).setAttribute("checked", "checked");
+		}
+		if(contact.work[1] == "Work"){
+			$(workCheck).setAttribute("checked", "checked");
+		}
+		if(contact.acquaintance[1] == "Acquaintance"){
+			$(acquaintanceCheck).setAttribute("checked", "checked");
+		}
+		$("birthday").value = contact.birthday[i];
+		$("bestyrating").value = contact.bestyrating[i];
+		$("notes").value = contact.notes[i];
+		
+		save.removeEventListener("click", storeData);
+		$("submit").value = "Edit Contact";
+		var editSubmit = $("submit");
+		editSubmit.eventListener("click", validate);
+		editSubmit.key = this.key;
+	}
+	
+	function deleteItem(){
+		
+	}
+	
+	function validate(eventData ){
+		var getFname = $("fname");
+		var getPhone = $("phone");
+		var getEmail = $("email");
+	
+		var errorMsg.innerHTML = "";
+		getfname.style.border = 1px solid black;
+		getPhone.style.border = 1px solid black;
+		getEmail.style.border = 1px solid black;		
+		var errorAry = [];
+		
+		if(getFname.value === ""){
+			var fnameError = "Please enter a first name.";
+			getfname.style.border = 1px solid red;
+			errorAry.push(fnameError);			
+		}
+		if(getPhone.value === ""){
+			var phoneError = "Please enter a phone number.";
+			getPhone.style.border = 1px solid red;
+			errorAry.push(phoneError);
+		}		
+		var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		if(!(re.exec(getEmail.value))){
+			var emailError = "Please enter a valid email address.";
+			getEmail.style.border = 1px solid red;
+			errorAry.push(emailError);
+		}
+		if(errorAry.length <= 1){
+			for(var i=0, j=errorAry.length; i<j; i++){
+			var text = document.createElement("li");
+			text.innerHTML = errorAry[i];
+			errorMsg.appendChild(text);
+			}
+			eventData.preventDefault();
+			return false;	
+		}else{
+			storeData(this.key);
 		}
 	}
 	
@@ -191,10 +301,11 @@ window.addEventListener("DOMContentLoaded", function() {
 		return false; // ?
 		}
 	}
+	
 
 /* Main Code */	
 	
-	storeContact.addEventListener("click", saveData);
+	storeContact.addEventListener("click", validate);
 	
 	displayContact.addEventListener("click", getContact);
 	
