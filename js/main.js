@@ -16,14 +16,14 @@ window.addEventListener("DOMContentLoaded", function() {
 	var friendCheck = "no";
 	var familyCheck = "no";
 	var schoolCheck = "no";
-	var workCheck = "no";
+	var workCheck 	= "no";
 	var acquaintanceCheck = "no";
 	
 	var storeContact = $("submit");
 	var displayContact = $("displayContact");
 	var clearContacts = $("clearContacts");
 	
-	var errorMsg =$("errors");
+	var errorMsg = $("errors");
 
 /* Declare Functions */
 
@@ -122,8 +122,12 @@ window.addEventListener("DOMContentLoaded", function() {
 	
 /* Collect Values */
 
-	function saveData(){
-		var key				= Math.floor(Math.random()*10000001); /* What if the same # is randomly generated twice?  Should I buy a lotto ticket? */
+	function saveData(keyListen){
+		if(!keyListen){
+			var key					= Math.floor(Math.random()*10000001);
+		}else{
+			key = keyListen;
+		}
 		whichRadio();
 		isFriend();
 		isFamily();
@@ -189,34 +193,35 @@ window.addEventListener("DOMContentLoaded", function() {
 		editLink.href = "#";
 		editLink.key = key;
 		var editLinkText = "Edit Contact";
-		//editLink.addEventListener("click", editItem);
+		editLink.addEventListener("click", editItem);
 		editLink.innerHTML = editLinkText;
-		makeLinks.appendChild(editLink);
+		addLinks.appendChild(editLink);
 		
 		var deleteLink = document.createElement("a");
 		deleteLink.href = "#";
 		deleteLink.key = key;
 		var deleteLinkText = "Delete Contact";
-		//deleteLink.addEventListener("click", deleteItem);
+		deleteLink.addEventListener("click", deleteItem);
 		deleteLink.innerHTML = deleteLinkText;
-		makeLinks.appendChild(deleteLink);
+		addLinks.appendChild(deleteLink);
 	}
 	
 	function editItem(){
 		var value = localStorage.getItem(this.key);
 		var item = JSON.parse(value);
-		toggleControls("off");
-		$("fname").value = contact.fname;
-		$("lname").value = contact.lname;
-		$("phone").value = contact.phone;
-		$("address").value = contact.address;
-		$("email").value] = contact.email;
+		toggleDisplay("off");
+		$("fname").value = contact.fname[1];
+		$("lname").value = contact.lname[1];
+		$("phone").value = contact.phone[1];
+		$("address").value = contact.address[1];
+		$("email").value = contact.email[1];
 		var radios = document.forms[0].gender;
 		for(var i=0; i<radios.length; i++){
 			if(radios[i].value == "Male" && contact.gender[1] == "Male"){
 				radios[i].setAttribute("checked", "checked");
 		}else if(radios[i].value == "Female" && contact.gender[1] == "Female"){
-			radios[i]setAttribute("checked", "checked");
+			radios[i].setAttribute("checked", "checked");
+			}
 		}
 		$("titles").value = contact.title;
 		if(contact.friend[1] == "Friend"){
@@ -246,18 +251,26 @@ window.addEventListener("DOMContentLoaded", function() {
 	}
 	
 	function deleteItem(){
-		
+		var ask = confirm("Delete Contact?");
+		if(ask){
+			localStorage.removeItem(this.key);
+			alert("Contact Deleted.");
+			window.location.reload();
+		}else{
+			alert("Contact not deleted.");
+		}
 	}
 	
-	function validate(eventData ){
+	function validate(e){ //  I would comment out this section before submitting but the I'd have change some other functions and arguments.
 		var getFname = $("fname");
 		var getPhone = $("phone");
 		var getEmail = $("email");
 	
-		var errorMsg.innerHTML = "";
+		errorMsg.innerHTML = ""; //  Keep getting bug that cascades line by line from this point on. "SyntaxError: At least one digit must occur after a decimal point".
 		getfname.style.border = 1px solid black;
 		getPhone.style.border = 1px solid black;
-		getEmail.style.border = 1px solid black;		
+		getEmail.style.border = 1px solid black;
+		
 		var errorAry = [];
 		
 		if(getFname.value === ""){
@@ -278,14 +291,14 @@ window.addEventListener("DOMContentLoaded", function() {
 		}
 		if(errorAry.length <= 1){
 			for(var i=0, j=errorAry.length; i<j; i++){
-			var text = document.createElement("li");
-			text.innerHTML = errorAry[i];
-			errorMsg.appendChild(text);
-			}
-			eventData.preventDefault();
+				var text = document.createElement("li");
+				text.innerHTML = errorAry[i];
+				errorMsg.appendChild(text);
+			}		
+		e.preventDefault();
 			return false;	
 		}else{
-			storeData(this.key);
+			storeContact(this.key);
 		}
 	}
 	
@@ -305,7 +318,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
 /* Main Code */	
 	
-	storeContact.addEventListener("click", validate);
+	storeContact.addEventListener("click", validate/*saveData*/);
 	
 	displayContact.addEventListener("click", getContact);
 	
