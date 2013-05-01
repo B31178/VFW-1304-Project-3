@@ -267,26 +267,26 @@ window.addEventListener("DOMContentLoaded", function() {
 		var getEmail = $("email");
 	
 		errorMsg.innerHTML = ""; //  Keep getting bug that cascades line by line from this point on. "SyntaxError: At least one digit must occur after a decimal point".
-		getfname.style.border = 1px solid black;
-		getPhone.style.border = 1px solid black;
-		getEmail.style.border = 1px solid black;
+		getFname.style.border = "1px solid black";
+		getPhone.style.border = "1px solid black";
+		getEmail.style.border = "1px solid black";
 		
 		var errorAry = [];
 		
 		if(getFname.value === ""){
 			var fnameError = "Please enter a first name.";
-			getfname.style.border = 1px solid red;
+			getfname.style.border = "1px solid red";
 			errorAry.push(fnameError);			
 		}
 		if(getPhone.value === ""){
 			var phoneError = "Please enter a phone number.";
-			getPhone.style.border = 1px solid red;
+			getPhone.style.border = "1px solid red";
 			errorAry.push(phoneError);
 		}		
 		var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 		if(!(re.exec(getEmail.value))){
 			var emailError = "Please enter a valid email address.";
-			getEmail.style.border = 1px solid red;
+			getEmail.style.border = "1px solid red";
 			errorAry.push(emailError);
 		}
 		if(errorAry.length <= 1){
@@ -298,7 +298,7 @@ window.addEventListener("DOMContentLoaded", function() {
 		e.preventDefault();
 			return false;	
 		}else{
-			storeContact(this.key);
+			/*storeContact*/saveData(this.key);
 		}
 	}
 	
